@@ -29,6 +29,8 @@
 .item > span {
   display: none;
   position: absolute;
+  bottom: 100%;
+  background-color: white;
 }
 .item:hover > span {
   display: block;

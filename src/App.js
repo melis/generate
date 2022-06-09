@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -15,7 +15,6 @@ function App() {
         newRyad.push({
           id: i + "-" + j,
           type: j === 0 ? "l" : "m",
-          name: j === 0 ? "ryad" + i : "m-" + i + "-" + j,
           r: i,
           m: j,
         });
@@ -25,79 +24,84 @@ function App() {
     setOb(() => newData);
   };
 
+  useEffect(() => {
+    console.log(ob);
+  }, [ob]);
+
   const buttonHandle = useCallback(
-    (el) => {
-      ob.forEach((arr, i) => {
+    (el, t) => {
+      console.log(t);
+      for (let i = 0; i < ob.length; i++) {
         let k = 1;
-        arr.forEach((e, j) => {
-          if (el.id === e.id) {
-            ob[i][j] = { ...el, type: el.type === "s" ? "m" : "s", m: 0 };
+        for (let j = 0; j < ob[i].length; j++) {
+          if (el.id === ob[i][j].id) {
+            ob[i][j] = { ...el, type: t ? "m" : "s", m: 0 };
           }
-          if (ob[i][j].type !== "l" && ob[i][j].type !== "s") {
+          if (ob[i][j].type === "m") {
             ob[i][j].m = k++;
           }
-        });
-      });
-
+        }
+      }
       setOb([...ob]);
     },
     [ob]
   );
 
-  const nodeList = useMemo(() => {
-    const row = (arr) => {
-      if (!arrow) {
-        return arr.map((el, j) => {
-          if (el.type === "l") {
-            return null;
-          }
-          if (el.type === "s") {
-            return (
-              <div
-                key={el.id}
-                className="item span"
-                onClick={() => buttonHandle(el)}
-              ></div>
-            );
-          }
-          return (
-            <div key={el.id} className="item">
-              {/* <span>
-                {el.r}-{el.m}
-              </span> */}
-              <button onClick={() => buttonHandle(el)}>{el.m}</button>
-            </div>
-          );
-        });
-      }
-      let r = [];
-      for (let i = arr.length - 1; i > 0; i--) {
-        if (arr[i].type === "l") {
-          r.push(null);
+  const row = (arr) => {
+    if (!arrow) {
+      return arr.map((el, j) => {
+        if (el.type === "l") {
+          return null;
         }
-        if (arr[i].type === "s") {
-          r.push(
+        if (el.type === "s") {
+          return (
             <div
-              key={arr[i].id}
+              key={el.id}
               className="item span"
-              onClick={() => buttonHandle(arr[i])}
+              onClick={() => buttonHandle(el, 1)}
             ></div>
           );
         }
-        if (arr[i].type === "m") {
-          r.push(
-            <div key={arr[i].id} className="item">
-              <span>{arr[i].id}</span>
-              <button onClick={() => buttonHandle(arr[i])}>{arr[i].m}</button>
-            </div>
-          );
-        }
+        return (
+          <div key={el.id} className="item">
+            <span>
+              {el.r} {el.m}
+            </span>
+            <button onClick={() => buttonHandle(el, 0)}>{el.m}</button>
+          </div>
+        );
+      });
+    }
+    let r = [];
+    for (let i = arr.length - 1; i > 0; i--) {
+      if (arr[i].type === "l") {
+        r.push(null);
       }
-      return r;
-    };
+      if (arr[i].type === "s") {
+        r.push(
+          <div
+            key={arr[i].id}
+            className="item span"
+            onClick={() => buttonHandle(arr[i], 1)}
+          ></div>
+        );
+      }
+      if (arr[i].type === "m") {
+        r.push(
+          <div key={arr[i].id} className="item">
+            <span>
+              {arr[i].r} {arr[i].m}
+            </span>
+            <button onClick={() => buttonHandle(arr[i], 0)}>{arr[i].m}</button>
+          </div>
+        );
+      }
+    }
+    return r;
+  };
 
+  const nodeList = useMemo(() => {
     let list = [];
-
     ob.forEach((arr, i) => {
       list.push(
         <div className="ryad" key={arr[0].id}>
@@ -165,7 +169,7 @@ function App() {
       </div>
       <div>
         <label htmlFor="" style={{ marginRight: "20px" }}>
-          С лева на прова
+          С лева на права
           <input
             type="radio"
             checked={!arrow}
