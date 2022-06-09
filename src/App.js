@@ -47,58 +47,63 @@ function App() {
     [ob]
   );
 
-  const row = (arr) => {
-    if (!arrow) {
-      return arr.map((el, j) => {
-        if (el.type === "l") {
-          return null;
-        }
-        if (el.type === "s") {
+  const row = useCallback(
+    (arr) => {
+      if (!arrow) {
+        return arr.map((el, j) => {
+          if (el.type === "l") {
+            return null;
+          }
+          if (el.type === "s") {
+            return (
+              <div
+                key={el.id}
+                className="item span"
+                onClick={() => buttonHandle(el, 1)}
+              ></div>
+            );
+          }
           return (
+            <div key={el.id} className="item">
+              <span>
+                {el.r} {el.m}
+              </span>
+              <button onClick={() => buttonHandle(el, 0)}>{el.m}</button>
+            </div>
+          );
+        });
+      }
+      let r = [];
+      for (let i = arr.length - 1; i > 0; i--) {
+        if (arr[i].type === "l") {
+          r.push(null);
+        }
+        if (arr[i].type === "s") {
+          r.push(
             <div
-              key={el.id}
+              key={arr[i].id}
               className="item span"
-              onClick={() => buttonHandle(el, 1)}
+              onClick={() => buttonHandle(arr[i], 1)}
             ></div>
           );
         }
-        return (
-          <div key={el.id} className="item">
-            <span>
-              {el.r} {el.m}
-            </span>
-            <button onClick={() => buttonHandle(el, 0)}>{el.m}</button>
-          </div>
-        );
-      });
-    }
-    let r = [];
-    for (let i = arr.length - 1; i > 0; i--) {
-      if (arr[i].type === "l") {
-        r.push(null);
+        if (arr[i].type === "m") {
+          r.push(
+            <div key={arr[i].id} className="item">
+              <span>
+                {arr[i].r} {arr[i].m}
+              </span>
+              <button onClick={() => buttonHandle(arr[i], 0)}>
+                {arr[i].m}
+              </button>
+            </div>
+          );
+        }
       }
-      if (arr[i].type === "s") {
-        r.push(
-          <div
-            key={arr[i].id}
-            className="item span"
-            onClick={() => buttonHandle(arr[i], 1)}
-          ></div>
-        );
-      }
-      if (arr[i].type === "m") {
-        r.push(
-          <div key={arr[i].id} className="item">
-            <span>
-              {arr[i].r} {arr[i].m}
-            </span>
-            <button onClick={() => buttonHandle(arr[i], 0)}>{arr[i].m}</button>
-          </div>
-        );
-      }
-    }
-    return r;
-  };
+      return r;
+    },
+    [arrow, buttonHandle]
+  );
 
   const nodeList = useMemo(() => {
     let list = [];
@@ -112,7 +117,7 @@ function App() {
     });
 
     return list;
-  }, [ob, buttonHandle, arrow]);
+  }, [ob, row]);
 
   return (
     <div className="App">

@@ -29,11 +29,16 @@
 .item > span {
   display: none;
   position: absolute;
-  bottom: 100%;
+  bottom: 105%;
   background-color: white;
 }
 .item:hover > span {
-  display: block;
+  display: flex;
+  width: auto;
+  border: 1px solid gray;
+  padding: 2px;
+  justify-content: center;
+  border-radius: 5px;
 }
 .item button {
   /* margin: auto; */
