@@ -1,17 +1,17 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 function App() {
   const [m, setM] = useState(0);
   const [r, setR] = useState(0);
-  const [ob, setOb] = useState({});
+  const [ob, setOb] = useState([]);
 
-  const handle = () => {
-    let nOb = {};
+  const generate = () => {
+    let newData = [];
     for (let i = 1; i <= r; i++) {
-      nOb[i] = [];
+      let newRyad = [];
       for (let j = 0; j <= m; j++) {
-        nOb[i].push({
+        newRyad.push({
           id: i + "-" + j,
           type: j === 0 ? "l" : "m",
           name: j === 0 ? "ryad" + i : "m-" + i + "-" + j,
@@ -19,70 +19,56 @@ function App() {
           m: j,
         });
       }
+      newData.push(newRyad);
     }
-
-    setOb((o) => nOb);
+    setOb(() => newData);
   };
 
-  const buttonHandle = useCallback(
-    (k, x) => {
-      setOb((o) => {
-        let newOb = {
-          ...o,
-          [k]: ob[k].map((n) => {
-            if (n.id === x.id) {
-              return { ...x, type: x.type === "m" ? "s" : "m" };
-            }
-            return n;
-          }),
-        };
-
-        newOb = JSON.parse(JSON.stringify(newOb));
-        for (let k in newOb) {
-          let i = 1;
-          newOb[k].forEach((e) => {
-            if (e.type === "m") {
-              e.m = i++;
-            } else {
-              e.m = 0;
-            }
-          });
+  const buttonHandle = (el) => {
+    ob.forEach((arr, i) => {
+      let k = 1;
+      arr.forEach((e, j) => {
+        if (el.id === e.id) {
+          ob[i][j] = { ...el, type: el.type === "s" ? "m" : "s", m: 0 };
         }
-
-        return newOb;
+        if (ob[i][j].type !== "l" && ob[i][j].type !== "s") {
+          ob[i][j].m = k++;
+        }
       });
-    },
-    [ob]
-  );
+    });
 
-  const list = useCallback(() => {
+    setOb([...ob]);
+  };
+
+  const nodeList = useMemo(() => {
     let list = [];
-    for (let k in ob) {
+    ob.forEach((arr, i) => {
       list.push(
-        <div className="ryad" key={k}>
-          <span className="ryad_name">Ряд {k}</span>
-          {ob[k].map((x, i) => {
-            if (x.type === "l") {
+        <div className="ryad" key={arr[0].id}>
+          <span className="ryad_name">Ряд {i + 1}</span>
+          {arr.map((el, j) => {
+            if (el.type === "l") {
               return null;
             }
-            if (x.type !== "m") {
+            if (el.type == "s") {
               return (
                 <div
-                  key={x.id}
+                  key={el.id}
                   className="item span"
-                  onClick={() => buttonHandle(k, x)}
+                  onClick={() => buttonHandle(el)}
                 ></div>
               );
             }
             return (
-              <div key={x.id} className="item">
-                <button onClick={() => buttonHandle(k, x)}>{x.m}</button>
+              <div key={el.id} className="item">
+                <button onClick={() => buttonHandle(el)}>{el.m}</button>
               </div>
             );
           })}
         </div>
       );
-    }
+    });
+
     return list;
   }, [ob, buttonHandle]);
 
@@ -112,14 +98,13 @@ function App() {
         <button
           className="btn btn-primary float-right"
           id="create"
-          onClick={handle}
+          onClick={generate}
         >
           Сгенерировать
         </button>
 
         <button
           onClick={() => {
-            console.log(ob);
             localStorage.setItem("zal", JSON.stringify(ob));
           }}
         >
@@ -127,8 +112,7 @@ function App() {
         </button>
         <button
           onClick={() => {
-            setOb({});
-            // localStorage.removeItem("zal");
+            setOb([]);
           }}
         >
           Очистить
@@ -141,7 +125,7 @@ function App() {
           Загрузит из хранилище
         </button>
       </div>
-      <div className="ploshad">{list()}</div>
+      <div className="ploshad">{nodeList}</div>
     </div>
   );
 }
