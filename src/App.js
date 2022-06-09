@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import "./App.css";
 
 function App() {
   const [m, setM] = useState(0);
   const [r, setR] = useState(0);
   const [ob, setOb] = useState([]);
+  const [arrow, setErrow] = useState(false);
 
   const generate = () => {
     let newData = [];
@@ -24,53 +25,90 @@ function App() {
     setOb(() => newData);
   };
 
-  const buttonHandle = (el) => {
-    ob.forEach((arr, i) => {
-      let k = 1;
-      arr.forEach((e, j) => {
-        if (el.id === e.id) {
-          ob[i][j] = { ...el, type: el.type === "s" ? "m" : "s", m: 0 };
-        }
-        if (ob[i][j].type !== "l" && ob[i][j].type !== "s") {
-          ob[i][j].m = k++;
-        }
+  const buttonHandle = useCallback(
+    (el) => {
+      ob.forEach((arr, i) => {
+        let k = 1;
+        arr.forEach((e, j) => {
+          if (el.id === e.id) {
+            ob[i][j] = { ...el, type: el.type === "s" ? "m" : "s", m: 0 };
+          }
+          if (ob[i][j].type !== "l" && ob[i][j].type !== "s") {
+            ob[i][j].m = k++;
+          }
+        });
       });
-    });
 
-    setOb([...ob]);
-  };
+      setOb([...ob]);
+    },
+    [ob]
+  );
 
   const nodeList = useMemo(() => {
+    const row = (arr) => {
+      if (!arrow) {
+        return arr.map((el, j) => {
+          if (el.type === "l") {
+            return null;
+          }
+          if (el.type === "s") {
+            return (
+              <div
+                key={el.id}
+                className="item span"
+                onClick={() => buttonHandle(el)}
+              ></div>
+            );
+          }
+          return (
+            <div key={el.id} className="item">
+              <span>
+                {el.r}-{el.m}
+              </span>
+              <button onClick={() => buttonHandle(el)}>{el.m}</button>
+            </div>
+          );
+        });
+      }
+      let r = [];
+      for (let i = arr.length - 1; i > 0; i--) {
+        if (arr[i].type === "l") {
+          r.push(null);
+        }
+        if (arr[i].type === "s") {
+          r.push(
+            <div
+              key={arr[i].id}
+              className="item span"
+              onClick={() => buttonHandle(arr[i])}
+            ></div>
+          );
+        }
+        if (arr[i].type === "m") {
+          r.push(
+            <div key={arr[i].id} className="item">
+              <span>{arr[i].id}</span>
+              <button onClick={() => buttonHandle(arr[i])}>{arr[i].m}</button>
+            </div>
+          );
+        }
+      }
+      return r;
+    };
+
     let list = [];
+
     ob.forEach((arr, i) => {
       list.push(
         <div className="ryad" key={arr[0].id}>
           <span className="ryad_name">Ряд {i + 1}</span>
-          {arr.map((el, j) => {
-            if (el.type === "l") {
-              return null;
-            }
-            if (el.type == "s") {
-              return (
-                <div
-                  key={el.id}
-                  className="item span"
-                  onClick={() => buttonHandle(el)}
-                ></div>
-              );
-            }
-            return (
-              <div key={el.id} className="item">
-                <button onClick={() => buttonHandle(el)}>{el.m}</button>
-              </div>
-            );
-          })}
+          {row(arr)}
         </div>
       );
     });
 
     return list;
-  }, [ob, buttonHandle]);
+  }, [ob, buttonHandle, arrow]);
 
   return (
     <div className="App">
@@ -124,6 +162,20 @@ function App() {
         >
           Загрузит из хранилище
         </button>
+      </div>
+      <div>
+        <label htmlFor="" style={{ marginRight: "20px" }}>
+          С лева на прова
+          <input
+            type="radio"
+            checked={!arrow}
+            onChange={() => setErrow(false)}
+          />
+        </label>
+        <label htmlFor="">
+          С права на лево
+          <input type="radio" checked={arrow} onChange={() => setErrow(true)} />
+        </label>
       </div>
       <div className="ploshad">{nodeList}</div>
     </div>
