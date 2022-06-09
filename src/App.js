@@ -43,9 +43,12 @@ function App() {
           newOb[k].forEach((e) => {
             if (e.type === "m") {
               e.m = i++;
+            } else {
+              e.m = 0;
             }
           });
         }
+
         return newOb;
       });
     },
@@ -116,6 +119,7 @@ function App() {
 
         <button
           onClick={() => {
+            console.log(ob);
             localStorage.setItem("zal", JSON.stringify(ob));
           }}
         >
@@ -132,7 +136,6 @@ function App() {
         <button
           onClick={() => {
             setOb(JSON.parse(localStorage.getItem("zal")));
-            console.log(ob);
           }}
         >
           Загрузит из хранилище
