@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -21,20 +21,43 @@ function App() {
       }
     }
 
-    setOb((o) => ({ ...o, ...nOb }));
+    setOb((o) => nOb);
   };
+
+  const buttonHandle = useCallback(
+    (k, x) => {
+      setOb((o) => {
+        let newOb = {
+          ...o,
+          [k]: ob[k].map((n) => {
+            if (n.id === x.id) {
+              return { ...x, type: x.type === "m" ? "s" : "m" };
+            }
+            return n;
+          }),
+        };
+
+        newOb = JSON.parse(JSON.stringify(newOb));
+        for (let k in newOb) {
+          let i = 1;
+          newOb[k].forEach((e) => {
+            if (e.type === "m") {
+              e.m = i++;
+            }
+          });
+        }
+        return newOb;
+      });
+    },
+    [ob]
+  );
 
   const list = useCallback(() => {
     let list = [];
     for (let k in ob) {
       list.push(
-        <div
-          style={{ margin: "5px 0", display: "flex" }}
-          className="ryad"
-          key={k}
-        >
-          <span>Ряд {k}</span>
-
+        <div className="ryad" key={k}>
+          <span className="ryad_name">Ряд {k}</span>
           {ob[k].map((x, i) => {
             if (x.type === "l") {
               return null;
@@ -42,79 +65,15 @@ function App() {
             if (x.type !== "m") {
               return (
                 <div
-                  style={{
-                    display: "inline-block",
-                    width: "30px",
-                    margin: "0 5px",
-                    height: "25px",
-                  }}
-                  className="item"
-                  onClick={(e) => {
-                    setOb((o) => {
-                      let newOb = {
-                        ...o,
-                        [k]: ob[k].map((n) => {
-                          if (n.id === x.id) {
-                            return { ...x, type: "m" };
-                          }
-                          return n;
-                        }),
-                      };
-
-                      newOb = JSON.parse(JSON.stringify(newOb));
-                      for (let k in newOb) {
-                        let i = 1;
-                        newOb[k].forEach((e) => {
-                          if (e.type === "m") {
-                            e.m = i++;
-                          }
-                        });
-                      }
-                      return newOb;
-                    });
-                  }}
+                  key={x.id}
+                  className="item span"
+                  onClick={() => buttonHandle(k, x)}
                 ></div>
               );
             }
             return (
-              <div
-                key={x.id}
-                className="item"
-                style={{
-                  display: "inline-block",
-                  width: "30px",
-                  height: "25px",
-                  margin: "0 5px",
-                }}
-              >
-                <button
-                  onClick={(e) => {
-                    setOb((o) => {
-                      let newOb = {
-                        ...o,
-                        [k]: ob[k].map((n) => {
-                          if (n.id === x.id) {
-                            return { ...x, type: "s" };
-                          }
-                          return n;
-                        }),
-                      };
-
-                      newOb = JSON.parse(JSON.stringify(newOb));
-                      for (let k in newOb) {
-                        let i = 1;
-                        newOb[k].forEach((e) => {
-                          if (e.type === "m") {
-                            e.m = i++;
-                          }
-                        });
-                      }
-                      return newOb;
-                    });
-                  }}
-                >
-                  {x.m}
-                </button>
+              <div key={x.id} className="item">
+                <button onClick={() => buttonHandle(k, x)}>{x.m}</button>
               </div>
             );
           })}
@@ -122,7 +81,7 @@ function App() {
       );
     }
     return list;
-  }, [ob]);
+  }, [ob, buttonHandle]);
 
   return (
     <div className="App">
@@ -153,6 +112,30 @@ function App() {
           onClick={handle}
         >
           Сгенерировать
+        </button>
+
+        <button
+          onClick={() => {
+            localStorage.setItem("zal", JSON.stringify(ob));
+          }}
+        >
+          Сохранить
+        </button>
+        <button
+          onClick={() => {
+            setOb({});
+            // localStorage.removeItem("zal");
+          }}
+        >
+          Очистить
+        </button>
+        <button
+          onClick={() => {
+            setOb(JSON.parse(localStorage.getItem("zal")));
+            console.log(ob);
+          }}
+        >
+          Загрузит из хранилище
         </button>
       </div>
       <div className="ploshad">{list()}</div>

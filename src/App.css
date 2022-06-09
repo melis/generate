@@ -2,3 +2,34 @@
   max-width: 1000px;
   margin: auto;
 }
+
+.ryad {
+  margin: 5px 0;
+  display: flex;
+}
+
+.ryad_name {
+  display: inline-block;
+  width: 60px;
+  min-width: 60px;
+}
+.item {
+  display: inline-block;
+  width: 30px;
+  height: 25px;
+  margin: 0 5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  min-width: 30px;
+}
+.span:hover {
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+.ploshad {
+  overflow: auto;
+  padding: 50px;
+}
+button:hover {
+  cursor: pointer;
+}
