@@ -62,9 +62,9 @@ function App() {
           }
           return (
             <div key={el.id} className="item">
-              <span>
+              {/* <span>
                 {el.r}-{el.m}
-              </span>
+              </span> */}
               <button onClick={() => buttonHandle(el)}>{el.m}</button>
             </div>
           );
