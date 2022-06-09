@@ -30,7 +30,6 @@ function App() {
 
   const buttonHandle = useCallback(
     (el, t) => {
-      console.log(t);
       for (let i = 0; i < ob.length; i++) {
         let k = 1;
         for (let j = 0; j < ob[i].length; j++) {
