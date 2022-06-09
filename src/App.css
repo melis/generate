@@ -21,6 +21,11 @@
   border: 1px solid transparent;
   cursor: pointer;
   min-width: 30px;
+  display: flex;
+  justify-content: center;
+}
+.item button {
+  /* margin: auto; */
 }
 .span:hover {
   border: 1px solid gray;
