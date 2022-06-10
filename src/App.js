@@ -90,6 +90,19 @@ function App() {
         <div className="ryad" key={arr[0].id}>
           <span className="ryad_name">Ряд {arr[0].r}</span>
           {row(arr)}
+          {/* <div
+            className="item"
+            onClick={() => {
+              ob.forEach((a, i) => {
+                if (a[0].r === arr[0].r) {
+                  a.push({ id: `${a[0].r}.${i}`, type: "m", r: a[0].r, m: 99 });
+                }
+              });
+              setOb([...ob]);
+            }}
+          >
+            +
+          </div> */}
         </div>
       );
     });
