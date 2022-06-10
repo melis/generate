@@ -28,6 +28,11 @@ function App() {
     console.log(ob);
   }, [ob]);
 
+  const reverse = () => {
+    ob.reverse();
+    setOb([...ob]);
+  };
+
   const buttonHandle = useCallback(
     (el, t) => {
       for (let i = 0; i < ob.length; i++) {
@@ -48,58 +53,32 @@ function App() {
 
   const row = useCallback(
     (arr) => {
-      if (!arrow) {
-        return arr.map((el, j) => {
-          if (el.type === "l") {
-            return null;
-          }
-          if (el.type === "s") {
-            return (
-              <div
-                key={el.id}
-                className="item span"
-                onClick={() => buttonHandle(el, 1)}
-              ></div>
-            );
-          }
-          return (
-            <div key={el.id} className="item">
-              <span>
-                {el.r} {el.m}
-              </span>
-              <button onClick={() => buttonHandle(el, 0)}>{el.m}</button>
-            </div>
-          );
-        });
+      let array = [...arr];
+      if (arrow) {
+        array.reverse();
       }
-      let r = [];
-      for (let i = arr.length - 1; i > 0; i--) {
-        if (arr[i].type === "l") {
-          r.push(null);
+      return array.map((el, j) => {
+        if (el.type === "l") {
+          return null;
         }
-        if (arr[i].type === "s") {
-          r.push(
+        if (el.type === "s") {
+          return (
             <div
-              key={arr[i].id}
+              key={el.id}
               className="item span"
-              onClick={() => buttonHandle(arr[i], 1)}
+              onClick={() => buttonHandle(el, 1)}
             ></div>
           );
         }
-        if (arr[i].type === "m") {
-          r.push(
-            <div key={arr[i].id} className="item">
-              <span>
-                {arr[i].r} {arr[i].m}
-              </span>
-              <button onClick={() => buttonHandle(arr[i], 0)}>
-                {arr[i].m}
-              </button>
-            </div>
-          );
-        }
-      }
-      return r;
+        return (
+          <div key={el.id} className="item">
+            <span>
+              {el.r}.{el.m}
+            </span>
+            <button onClick={() => buttonHandle(el, 0)}>{el.m}</button>
+          </div>
+        );
+      });
     },
     [arrow, buttonHandle]
   );
@@ -109,7 +88,7 @@ function App() {
     ob.forEach((arr, i) => {
       list.push(
         <div className="ryad" key={arr[0].id}>
-          <span className="ryad_name">Ряд {i + 1}</span>
+          <span className="ryad_name">Ряд {arr[0].r}</span>
           {row(arr)}
         </div>
       );
@@ -156,13 +135,7 @@ function App() {
         >
           Сохранить
         </button>
-        <button
-          onClick={() => {
-            setOb([]);
-          }}
-        >
-          Очистить
-        </button>
+        <button onClick={reverse}>Верх вниз</button>
         <button
           onClick={() => {
             setOb(JSON.parse(localStorage.getItem("zal")));
@@ -172,18 +145,19 @@ function App() {
         </button>
       </div>
       <div>
-        <label htmlFor="" style={{ marginRight: "20px" }}>
+        <label
+          htmlFor=""
+          style={{ marginRight: "20px" }}
+          onClick={() => setErrow(false)}
+        >
           С лева на права
-          <input
-            type="radio"
-            checked={!arrow}
-            onChange={() => setErrow(false)}
-          />
+          <input type="radio" checked={!arrow} />
         </label>
-        <label htmlFor="">
+        <label htmlFor="" onClick={() => setErrow(true)}>
           С права на лево
-          <input type="radio" checked={arrow} onChange={() => setErrow(true)} />
+          <input type="radio" checked={arrow} />
         </label>
+        <button onClick={reverse}>Верх вниз</button>
       </div>
       <div className="ploshad">{nodeList}</div>
     </div>
