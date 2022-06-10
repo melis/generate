@@ -135,7 +135,7 @@ function App() {
         >
           Сохранить
         </button>
-        <button onClick={reverse}>Верх вниз</button>
+        <button onClick={() => setOb([])}>Очистить</button>
         <button
           onClick={() => {
             setOb(JSON.parse(localStorage.getItem("zal")));
