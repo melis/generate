@@ -2,113 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 import "./App.css";
 
 function App() {
-  const [m, setM] = useState(0);
-  const [r, setR] = useState(0);
-  const [ob, setOb] = useState([]);
-  const [arrow, setErrow] = useState(false);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
 
-  const generate = () => {
-    let newData = [];
-    for (let i = 1; i <= r; i++) {
-      let newRyad = [];
-      for (let j = 0; j <= m; j++) {
-        newRyad.push({
-          id: i + "-" + j,
-          type: j === 0 ? "l" : "m",
-          name: j === 0 ? "ryad" + i : "m-" + i + "-" + j,
-          r: i,
-          m: j,
-        });
-      }
-      newData.push(newRyad);
-    }
-    setOb(() => newData);
-  };
-
-  const buttonHandle = useCallback(
-    (el) => {
-      ob.forEach((arr, i) => {
-        let k = 1;
-        arr.forEach((e, j) => {
-          if (el.id === e.id) {
-            ob[i][j] = { ...el, type: el.type === "s" ? "m" : "s", m: 0 };
-          }
-          if (ob[i][j].type !== "l" && ob[i][j].type !== "s") {
-            ob[i][j].m = k++;
-          }
-        });
-      });
-
-      setOb([...ob]);
-    },
-    [ob]
-  );
-
-  const nodeList = useMemo(() => {
-    const row = (arr) => {
-      if (!arrow) {
-        return arr.map((el, j) => {
-          if (el.type === "l") {
-            return null;
-          }
-          if (el.type === "s") {
-            return (
-              <div
-                key={el.id}
-                className="item span"
-                onClick={() => buttonHandle(el)}
-              ></div>
-            );
-          }
-          return (
-            <div key={el.id} className="item">
-              {/* <span>
-                {el.r}-{el.m}
-              </span> */}
-              <button onClick={() => buttonHandle(el)}>{el.m}</button>
-            </div>
-          );
-        });
-      }
-      let r = [];
-      for (let i = arr.length - 1; i > 0; i--) {
-        if (arr[i].type === "l") {
-          r.push(null);
-        }
-        if (arr[i].type === "s") {
-          r.push(
-            <div
-              key={arr[i].id}
-              className="item span"
-              onClick={() => buttonHandle(arr[i])}
-            ></div>
-          );
-        }
-        if (arr[i].type === "m") {
-          r.push(
-            <div key={arr[i].id} className="item">
-              <span>{arr[i].id}</span>
-              <button onClick={() => buttonHandle(arr[i])}>{arr[i].m}</button>
-            </div>
-          );
-        }
-      }
-      return r;
-    };
-
-    let list = [];
-
-    ob.forEach((arr, i) => {
-      list.push(
-        <div className="ryad" key={arr[0].id}>
-          <span className="ryad_name">Ряд {i + 1}</span>
-          {row(arr)}
-        </div>
-      );
-    });
-
-    return list;
-  }, [ob, buttonHandle, arrow]);
+  const generate = () => {};
 
   return (
     <div className="App">
@@ -120,7 +17,7 @@ function App() {
               className="form-control"
               id="seats_count"
               placeholder="Мест в ряду"
-              onChange={(e) => setM(e.target.value)}
+              onChange={(e) => setX(e.target.value)}
             />
           </div>
           <div className="form-group col-md-6">
@@ -129,7 +26,7 @@ function App() {
               className="form-control"
               id="row"
               placeholder="Рядов"
-              onChange={(e) => setR(e.target.value)}
+              onChange={(e) => setY(e.target.value)}
             />
           </div>
         </div>
@@ -148,17 +45,11 @@ function App() {
         >
           Сохранить
         </button>
+        <button>Очистить</button>
         <button
-          onClick={() => {
-            setOb([]);
-          }}
-        >
-          Очистить
-        </button>
-        <button
-          onClick={() => {
-            setOb(JSON.parse(localStorage.getItem("zal")));
-          }}
+        // onClick={() => {
+        //   setOb(JSON.parse(localStorage.getItem("zal")));
+        // }}
         >
           Загрузит из хранилище
         </button>
@@ -166,18 +57,14 @@ function App() {
       <div>
         <label htmlFor="" style={{ marginRight: "20px" }}>
           С лева на прова
-          <input
-            type="radio"
-            checked={!arrow}
-            onChange={() => setErrow(false)}
-          />
+          <input type="radio" />
         </label>
         <label htmlFor="">
           С права на лево
-          <input type="radio" checked={arrow} onChange={() => setErrow(true)} />
+          <input type="radio" />
         </label>
       </div>
-      <div className="ploshad">{nodeList}</div>
+      <div className="ploshad"></div>
     </div>
   );
 }
