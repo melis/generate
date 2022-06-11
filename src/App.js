@@ -37,13 +37,13 @@ function App() {
   const buttonHandle = useCallback(
     (el, t) => {
       for (let i = 0; i < ob.length; i++) {
-        let k = 1;
+        let k = 0;
         for (let j = 0; j < ob[i].length; j++) {
           if (el.id === ob[i][j].id) {
             ob[i][j] = { ...el, type: t ? "m" : "s", m: 0 };
           }
           if (ob[i][j].type === "m") {
-            ob[i][j].m = k++;
+            ob[i][j].m = ++k;
           }
         }
       }
@@ -91,19 +91,6 @@ function App() {
         <div className="ryad" key={arr[0].id}>
           <span className="ryad_name">Ряд {arr[0].r}</span>
           {row(arr)}
-          {/* <div
-            className="item"
-            onClick={() => {
-              ob.forEach((a, i) => {
-                if (a[0].r === arr[0].r) {
-                  a.push({ id: `${a[0].r}.${i}`, type: "m", r: a[0].r, m: 99 });
-                }
-              });
-              setOb([...ob]);
-            }}
-          >
-            +
-          </div> */}
         </div>
       );
     });
