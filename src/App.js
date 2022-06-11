@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
+  const [z, setZ] = useState([]);
 
   const generate = () => {
     const list = [];
@@ -15,6 +16,19 @@ function App() {
     return <div>1</div>;
   };
 
+  useEffect(() => {
+    let arrY = [];
+    if (x && y) {
+      for (let r = 1; r <= y; r++) {
+        let arrX = [];
+        for (let s = 1; s <= x; s++) {
+          arrX.push({ id: `${r}.${s}`, type: null, r, s });
+        }
+        arrY.push(arrX);
+      }
+    }
+    setZ(arrY);
+  }, [x, y]);
   const zal = generate();
 
   return (
