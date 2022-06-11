@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
 
         <button
           onClick={() => {
-            localStorage.setItem("zal", JSON.stringify(ob));
+            localStorage.setItem("zal", JSON.stringify(""));
           }}
         >
           Сохранить
