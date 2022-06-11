@@ -5,7 +5,17 @@ function App() {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
 
-  const generate = () => {};
+  const generate = () => {
+    const list = [];
+    if (x && y) {
+      for (let r = 1; r <= y; r++) {
+        for (let s = 1; s <= x; s++) {}
+      }
+    }
+    return <div>1</div>;
+  };
+
+  const zal = generate();
 
   return (
     <div className="App">
@@ -64,7 +74,7 @@ function App() {
           <input type="radio" />
         </label>
       </div>
-      <div className="ploshad"></div>
+      <div className="ploshad">{zal}</div>
     </div>
   );
 }
